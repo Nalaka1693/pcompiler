@@ -5,6 +5,7 @@
 *.pdf
 *.pyc
 *.code-workspace
+.project
 
 .settings
 .vscode/
