@@ -1,0 +1,11 @@
+*.class
+*.exe
+*.lnk
+*.log
+*.pdf
+*.pyc
+*.code-workspace
+
+.settings
+.vscode/
+.devcontainer/

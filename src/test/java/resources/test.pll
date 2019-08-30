@@ -1,0 +1,30 @@
+include io;
+
+// custom function
+function my_function(a : int, b : double) : double {
+    int idx = 0;
+    bool loop = true;
+
+    while (loop == true) {
+        if (idx > b) {
+            loop = false;
+        }
+
+        idx = idx + 1;
+    }
+
+    return a * b;
+}
+
+// main function
+function main() : int {
+    print("Hello World!");
+
+    int a = 5;
+    double b = 2.3;
+
+    double r = my_fuction(a, b);
+    print("Result = ", r);
+
+    return 1;
+}
