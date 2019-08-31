@@ -81,8 +81,16 @@ public class Lexer {
      */
     private char nextChar() {
         try {
-            this.position++;
-            this.columnNum++;
+            char chr = this.sourceCode.charAt(this.position);
+            if (Lexer.isNewLine(chr)) {
+                this.position++;
+                this.lineNum++;
+                this.columnNum = 0;
+            } else {
+                this.position++;
+                this.columnNum++;
+            }
+            
             return this.sourceCode.charAt(this.position);
         } catch (StringIndexOutOfBoundsException e) {
             return '\0';
@@ -184,11 +192,7 @@ public class Lexer {
             }
 
             if (Lexer.isNewLine(chr)) {
-                this.position++;
-                this.lineNum++;
-                // can't call nextChat(), for each line cloumn will be reset
-                this.columnNum = 0;
-                chr = this.sourceCode.charAt(this.position);
+                chr = this.nextChar();
                 continue;
             }
             
@@ -221,31 +225,31 @@ public class Lexer {
                 String value = sourceCode.substring(start, this.position + 1);
 
                 if (value.equals("if")) {
-                    return new Token(TokenClass.KEYWORD_IF, value, this.lineNum, this.columnNum);
+                    return new Token(TokenClass.KEYWORD_IF,"", this.lineNum, this.columnNum);
                 } else if (value.equals("else")) {
-                    return new Token(TokenClass.KEYWORD_ELSE, value, this.lineNum, this.columnNum);
+                    return new Token(TokenClass.KEYWORD_ELSE,"", this.lineNum, this.columnNum);
                 } else if (value.equals("while")) {
-                    return new Token(TokenClass.KEYWORD_WHILE, value, this.lineNum, this.columnNum);
+                    return new Token(TokenClass.KEYWORD_WHILE,"", this.lineNum, this.columnNum);
                 } else if (value.equals("int")) {
-                    return new Token(TokenClass.KEYWORD_INT, value, this.lineNum, this.columnNum);
+                    return new Token(TokenClass.KEYWORD_INT,"", this.lineNum, this.columnNum);
                 } else if (value.equals("str")) {
-                    return new Token(TokenClass.KEYWORD_STR, value, this.lineNum, this.columnNum);
+                    return new Token(TokenClass.KEYWORD_STR,"", this.lineNum, this.columnNum);
                 } else if (value.equals("bool")) {
-                    return new Token(TokenClass.KEYWORD_BOOL, value, this.lineNum, this.columnNum);
+                    return new Token(TokenClass.KEYWORD_BOOL,"", this.lineNum, this.columnNum);
                 } else if (value.equals("double")) {
-                    return new Token(TokenClass.KEYWORD_DOUBLE, value, this.lineNum, this.columnNum);
+                    return new Token(TokenClass.KEYWORD_DOUBLE,"", this.lineNum, this.columnNum);
                 } else if (value.equals("true")) {
-                    return new Token(TokenClass.KEYWORD_TRUE, value, this.lineNum, this.columnNum);
+                    return new Token(TokenClass.KEYWORD_TRUE,"", this.lineNum, this.columnNum);
                 } else if (value.equals("false")) {
-                    return new Token(TokenClass.KEYWORD_FALSE, value, this.lineNum, this.columnNum);
+                    return new Token(TokenClass.KEYWORD_FALSE,"", this.lineNum, this.columnNum);
                 } else if (value.equals("function")) {
-                    return new Token(TokenClass.KEYWORD_FUNCTION, value, this.lineNum, this.columnNum);
+                    return new Token(TokenClass.KEYWORD_FUNCTION,"", this.lineNum, this.columnNum);
                 } else if (value.equals("return")) {
-                    return new Token(TokenClass.KEYWORD_RETURN, value, this.lineNum, this.columnNum);
+                    return new Token(TokenClass.KEYWORD_RETURN,"", this.lineNum, this.columnNum);
                 } else if (value.equals("include")) {
-                    return new Token(TokenClass.KEYWORD_INCLUDE, value, this.lineNum, this.columnNum);
+                    return new Token(TokenClass.KEYWORD_INCLUDE,"", this.lineNum, this.columnNum);
                 } else {
-                    return new Token(TokenClass.IDENTIFIER, value, this.lineNum, this.columnNum);
+                    return new Token(TokenClass.IDENTIFIER,"", this.lineNum, this.columnNum);
                 }
             }
 
@@ -268,8 +272,8 @@ public class Lexer {
                     }
                 }
                 
-                // to collect numbers after decinal point
-                if (this.sourceCode.charAt(this.position + 1) == '.') {
+                // to collect numbers after decimal point
+                if (chr != '\0' && this.sourceCode.charAt(this.position + 1) == '.') {
                     this.nextChar();
 
                     while (true) {
@@ -324,8 +328,7 @@ public class Lexer {
                     chr = this.nextChar();
 
                     if (Lexer.isNewLine(chr)) {
-                        this.lineNum++;
-                        this.columnNum = 0;
+                        this.nextChar();
                         back = true;
                         break;
                     } else if (chr == '\0') {   // end of source code
